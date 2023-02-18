@@ -35,6 +35,9 @@ void ThreadPool::Init(int threadNum = 4, int taskCapacity = DEFAULT_TASK_CAPACIT
 ThreadPool::~ThreadPool()
 {
     m_close = true;
+    while (!m_taskQueue.empty()) {
+        m_taskQueue.pop();
+    }
     m_cond.notify_all();
 }
 

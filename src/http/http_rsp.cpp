@@ -2,6 +2,12 @@
 
 using namespace std;
 
+HttpRsp::HttpRsp() {}
+
+HttpRsp::~HttpRsp() {
+    m_fileAddr = nullptr;
+}
+
 void HttpRsp::init() {
 }
 

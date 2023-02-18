@@ -14,6 +14,9 @@ using namespace std;
 
 class HttpRsp {
 public:
+    HttpRsp();
+    ~HttpRsp();
+    
     static const int WRITE_BUFFER_SIZE = 1024;
 
     void init();

@@ -30,6 +30,9 @@ using namespace std;
 
 class NetworkConn {
 public:
+    NetworkConn();
+    ~NetworkConn();
+
     void SetGraceOpt(int fd);
     void SetReUseAddr(int fd);
     void SocketBind(int fd, string ip, int port);
@@ -48,12 +51,15 @@ public:
     void DealErrCli(int fd);
     void DealReadCli(int fd);
     void EventLoop();
+
+    void Close();
 private:
     int m_listenFd;
     int m_epollFd;
     unordered_map<int, Client> m_clients;
     int m_clientCnt;
     TimerManager timer;
+    bool m_running;
 };
 
 #endif

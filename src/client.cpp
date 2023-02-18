@@ -19,7 +19,8 @@ void Client::init(const int fd, sockaddr_in addr) {
 Client::~Client() {}
 
 void Client::Close() {
-    close(m_fd);
+    if (m_fd)
+        close(m_fd);
 }
 
 E_HTTP_RESULT Client::Process() {

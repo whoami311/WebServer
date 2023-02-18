@@ -2,6 +2,14 @@
 
 using namespace std;
 
+NetworkConn::NetworkConn() {
+    m_running = true;
+}
+
+NetworkConn::~NetworkConn() {
+    Close();
+}
+
 void NetworkConn::SetGraceOpt(int fd) {
     struct linger opt = {0};
     opt.l_onoff = 1;
@@ -32,6 +40,7 @@ void NetworkConn::SocketBind(int fd, string ip, int port) {
     int ret = bind(fd, (struct sockaddr*)&addr, sizeof(addr));
     if (ret < 0) {
         LOG_ERROR("bind failed!, return %d", ret);
+        close(m_listenFd);
         exit(0);
     }
 }
@@ -40,6 +49,7 @@ void NetworkConn::SocketListen(int fd) {
     int ret = listen(fd, SOCKET_LISTEN_NUM);
     if (ret < 0) {
         LOG_ERROR("listen failed!, return %d", ret);
+        close(m_listenFd);
         exit(0);
     }
 }
@@ -163,7 +173,7 @@ void NetworkConn::EventLoop() {
 
     // ThreadPool pool(4, DEFAULT_TASK_CAPACITY);
 
-    while (true) {
+    while (m_running) {
         cout << "will epoll_wait, events.size() == " << events.size() << endl;
         // EpollAddFd(m_listenFd);
         int eventCnt = epoll_wait(m_epollFd, &events[0], events.size(), EPOLL_WAIT_TIMEOUT);
@@ -200,3 +210,10 @@ void NetworkConn::EventLoop() {
     }
 }
 
+void NetworkConn::Close() {
+    m_running = false;
+    if (m_listenFd)
+        close(m_listenFd);
+    if (m_epollFd)
+        close(m_epollFd);
+}
