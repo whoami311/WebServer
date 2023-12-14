@@ -1,9 +1,14 @@
 #include "http/http_req.h"
 
-using namespace std;
+#include <string.h>
+#include <sys/socket.h>
+
+#include "http/http_parse.h"
+#include "log.h"
+#include "utils.h"
 
 void HttpReq::Reset() {
-    m_method = GET;
+    m_method = HTTP_METHOD::GET;
     m_url = "";
     m_version = "";
     m_contentLen = 0;
@@ -35,14 +40,14 @@ bool HttpReq::ReadOnce(int sockFd) {
     return true;
 }
 
-E_HTTP_CODE HttpReq::ProcessRead() {
+HTTP_CODE HttpReq::ProcessRead() {
     HttpParser parseTxt(m_readBuf);
-    // parseTxt.show();
+    // parseTxt.Show();
     m_url = parseTxt["Path"];
     if (parseTxt["Method"] == "GET") {
-        m_method = GET;
+        m_method = HTTP_METHOD::GET;
     } else {
-        m_method = POST;
+        m_method = HTTP_METHOD::POST;
     }
     m_version = parseTxt["Version"];
     if (!parseTxt["Content-length"].empty())
@@ -54,12 +59,13 @@ E_HTTP_CODE HttpReq::ProcessRead() {
         m_linger = false;
     }
     m_body = parseTxt["Body"];
-    cout << "m_url == "<< m_url << ", m_method = "<< m_method << ", m_body = " << m_body << endl;
-    
-    if (m_url.empty() || m_version.empty())
-        return BAD_REQUEST;
-    if (m_method == GET || !m_body.empty())
-        return GET_REQUEST;
+    std::cout << "m_url == " << m_url << ", m_method = " << static_cast<int>(m_method) << ", m_body = " << m_body
+              << std::endl;
 
-    return NO_REQUEST;
+    if (m_url.empty() || m_version.empty())
+        return HTTP_CODE::BAD_REQUEST;
+    if (m_method == HTTP_METHOD::GET || !m_body.empty())
+        return HTTP_CODE::GET_REQUEST;
+
+    return HTTP_CODE::NO_REQUEST;
 }

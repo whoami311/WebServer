@@ -1,33 +1,27 @@
-#ifndef HTTP_BUILD_H
-#define HTTP_BUILD_H
+#pragma once
 
-#include <iostream>
 #include <string>
 #include <unordered_map>
-#include <map>
-
-using namespace std;
 
 class HttpBuild {
 public:
     HttpBuild();
     ~HttpBuild();
-    void show();
-    std::string operator[](std::string str);
-    void set(string key, string val);
-    string getContent();
+    void Show();
+    std::string operator[](const std::string& str);
+    void Set(const std::string& key, const std::string& val);
+    std::string GetContent();
+
 private:
-    string stateLine();
-    string getStateLine();
-    string getHeader();
+    // string stateLine();
+    std::string GetStateLine();
+    std::string GetHeader();
 
-    string endOfLine;
-    unordered_map<int, string> stateTitle;
-    unordered_map<int, string> stateBody;
-    string version;
+    std::string endOfLine;
+    std::unordered_map<int, std::string> stateTitle;
+    std::unordered_map<int, std::string> stateBody;
+    std::string version;
     int state;
-    unordered_map<string, string> header;
-    string body;
+    std::unordered_map<std::string, std::string> header;
+    std::string body;
 };
-
-#endif

@@ -1,14 +1,10 @@
-#ifndef TIMER_H
-#define TIMER_H
+#pragma once
 
-#include <mutex>
 #include <chrono>
-#include <queue>
 #include <functional>
 #include <memory>
-#include "log.h"
-
-using namespace std;
+#include <mutex>
+#include <queue>
 
 struct TimerNode;
 // class TimerNode;
@@ -45,7 +41,7 @@ struct TimerNode {
     TimePoint expires;
     bool deleted;
 
-    bool operator<(const TimerNode &t) {
+    bool operator<(const TimerNode& t) {
         return expires < t.expires;
     }
 };
@@ -63,14 +59,13 @@ public:
     ~TimerManager();
 
     // TimerNodePointer AddTimer(TimerCb cb, int timeout);
-    TimerNodePointer AddTimer(const TimerCb& cb, int timeout);
+    TimerNodePointer AddTimer(TimerCb cb, int timeout);
     // bool AddTimer(TimerNode node);
     // bool DelTimer();
     void HandleTimer();
     void clear();
-private:
-    priority_queue<TimerNodePointer, deque<TimerNodePointer>, TimerCmp> m_heap;
-    mutex m_mtx;
-};
 
-#endif
+private:
+    std::priority_queue<TimerNodePointer, std::deque<TimerNodePointer>, TimerCmp> m_heap;
+    std::mutex m_mtx;
+};

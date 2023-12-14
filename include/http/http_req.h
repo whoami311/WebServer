@@ -1,16 +1,8 @@
-#ifndef HTTP_REQ_H
-#define HTTP_REQ_H
+#pragma once
 
-#include <string.h>
-#include <sys/socket.h>
-#include "string"
-#include "log.h"
-#include "utils.h"
-#include "http_parse.h"
+#include <string>
 
-using namespace std;
-
-enum E_HTTP_METHOD {
+enum class HTTP_METHOD {
     GET = 0,
     POST,
     HEAD,
@@ -22,13 +14,13 @@ enum E_HTTP_METHOD {
     PATH
 };
 
-enum E_CHECK_STATE {
-    CHECK_STATE_REQUESTLINE = 0,
-    CHECK_STATE_HEADER,
-    CHECK_STATE_CONTENT
+enum class CHECK_STATE {
+    REQUESTLINE = 0,
+    HEADER,
+    CONTENT
 };
 
-enum E_HTTP_CODE {
+enum class HTTP_CODE {
     NO_REQUEST,
     GET_REQUEST,
     BAD_REQUEST,
@@ -39,39 +31,38 @@ enum E_HTTP_CODE {
     CLOSED_CONNECTION
 };
 
-enum E_LINE_STATUS {
-    LINE_OK = 0,
-    LINE_BAD,
-    LINE_OPEN
+enum LINE_STATUS {
+    OK = 0,
+    BAD,
+    OPEN
 };
 
 struct HttpConfig {
     bool linger;
-    string version;
-    E_HTTP_CODE reqRes;
-    string url;
+    std::string version;
+    HTTP_CODE reqRes;
+    std::string url;
 };
+
+constexpr int READ_BUFFER_SIZE = 2048;
 
 class HttpReq {
 public:
-    static const int READ_BUFFER_SIZE = 2048;
-
     void Reset();
     bool ReadOnce(int sockFd);
-    E_HTTP_CODE DoReq();
-    E_HTTP_CODE ProcessRead();
+    HTTP_CODE DoReq();
+    HTTP_CODE ProcessRead();
 
-    string m_url;
+    std::string m_url;
     bool m_linger;
-    string m_version;
+    std::string m_version;
+
 private:
     char m_readBuf[READ_BUFFER_SIZE];
     int m_readIdx;
-    E_HTTP_METHOD m_method;
-    
-    string m_host;
-    int m_contentLen;
-    string m_body;
-};
+    HTTP_METHOD m_method;
 
-#endif
+    std::string m_host;
+    int m_contentLen;
+    std::string m_body;
+};

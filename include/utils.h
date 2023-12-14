@@ -1,14 +1,12 @@
 #include <string>
-#include <fcntl.h>
 
-using namespace std;
+namespace utils {
 
-#define CORRECT_NUMBER_RANGE(x, mi, ma) \
-    do { \
-        x = min(x, ma); \
-        x = max(x, mi); \
-    } while (0);
+template <typename T>
+void CorrectNumberRange(T& x, T mi, T ma);
 
 void SetNonBlock(int fd);
 
-string GetFileSuffix (string file);
+std::string GetFileSuffix(const std::string& file);
+
+}  // namespace utils

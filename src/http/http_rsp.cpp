@@ -1,6 +1,11 @@
 #include "http/http_rsp.h"
 
-using namespace std;
+#include <sys/mman.h>
+#include <sys/uio.h>
+#include <unistd.h>
+
+#include "log.h"
+#include "utils.h"
 
 HttpRsp::HttpRsp() {}
 
@@ -8,49 +13,47 @@ HttpRsp::~HttpRsp() {
     m_fileAddr = nullptr;
 }
 
-void HttpRsp::init() {
-}
+void HttpRsp::Init() {}
 
-bool HttpRsp::ProcessWrite(HttpConfig config)
-{
-    E_HTTP_CODE ret = config.reqRes;
-    m_builder.set("Version", config.version);
-    m_builder.set("Server", "Felix Server");
+bool HttpRsp::ProcessWrite(const HttpConfig &config) {
+    HTTP_CODE ret = config.reqRes;
+    m_builder.Set("Version", config.version);
+    m_builder.Set("Server", "Felix Server");
     if (config.linger) {
-        m_builder.set("Connection", "keep-alive");
-        m_builder.set("Keep-Alive", "timeout=20");
+        m_builder.Set("Connection", "keep-alive");
+        m_builder.Set("Keep-Alive", "timeout=20");
     } else
-        m_builder.set("Connection", "close");
-    
+        m_builder.Set("Connection", "close");
+
     switch (ret) {
-        case INTERNAL_ERROR: {
-            m_builder.set("State", "500");
+        case HTTP_CODE::INTERNAL_ERROR: {
+            m_builder.Set("State", "500");
             return false;
             break;
         }
-        case BAD_REQUEST: {
-            m_builder.set("State", "404");
+        case HTTP_CODE::BAD_REQUEST: {
+            m_builder.Set("State", "404");
             return false;
             break;
         }
-        case FORBIDDEN_REQUEST: {
-            m_builder.set("State", "403");
+        case HTTP_CODE::FORBIDDEN_REQUEST: {
+            m_builder.Set("State", "403");
             return false;
             break;
         }
-        case FILE_REQUEST: {
-            m_builder.set("State", "200");
-            if (GetFileSuffix(config.url) == "ico")
-                m_builder.set("Content-Type", "image/ico");
+        case HTTP_CODE::FILE_REQUEST: {
+            m_builder.Set("State", "200");
+            if (utils::GetFileSuffix(config.url) == "ico")
+                m_builder.Set("Content-Type", "image/ico");
             else
-                m_builder.set("Content-Type", "text/html");
+                m_builder.Set("Content-Type", "text/html");
             if (m_fileStat.st_size != 0) {
-                m_builder.set("Content-Length", to_string(m_fileStat.st_size));
+                m_builder.Set("Content-Length", std::to_string(m_fileStat.st_size));
                 return true;
             } else {
-                const string okString = "<html><body></body></html>";
-                m_builder.set("Body", okString);
-                m_builder.set("Content-Length", to_string(okString.size()));
+                const std::string okString = "<html><body></body></html>";
+                m_builder.Set("Body", okString);
+                m_builder.Set("Content-Length", std::to_string(okString.size()));
             }
         }
         default:
@@ -60,8 +63,7 @@ bool HttpRsp::ProcessWrite(HttpConfig config)
     return true;
 }
 
-void HttpRsp::unmap()
-{
+void HttpRsp::unmap() {
     if (m_fileAddr) {
         munmap(m_fileAddr, m_fileStat.st_size);
         m_fileAddr = nullptr;
@@ -76,7 +78,7 @@ bool HttpRsp::Write()
     if (m_bytesToSend == 0)
     {
         EpollModFd(m_epollFd, m_sockFd, EPOLLIN);
-        init();
+        Init();
         return true;
     }
 
@@ -115,7 +117,7 @@ bool HttpRsp::Write()
 
             if (m_linger)
             {
-                init();
+                Init();
                 return true;
             }
             else
@@ -126,4 +128,3 @@ bool HttpRsp::Write()
     }
 }
 */
-

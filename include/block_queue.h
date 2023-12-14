@@ -1,20 +1,18 @@
 #include <unistd.h>
-#include <iostream>
-#include <string>
-#include <deque>
-#include <mutex>
+
 #include <condition_variable>
+#include <deque>
+#include <iostream>
+#include <mutex>
+#include <string>
 
-using namespace std;
-
-template<class T>
-class BlockQueue
-{
+template <class T>
+class BlockQueue {
 public:
     explicit BlockQueue(int capacity = 1000) : m_capacity(capacity) {
         m_close = false;
         if (m_capacity <= 0) {
-            cout << "BlockQueue capacity <= 0" << endl;
+            std::cout << "BlockQueue capacity <= 0" << std::endl;
             exit(0);
         }
     };
@@ -25,7 +23,7 @@ public:
 
     void clear() {
         {
-            lock_guard<mutex> locker(m_mtx);
+            std::lock_guard<std::mutex> locker(m_mtx);
             m_deque.clear();
         }
         m_cond.notify_all();
@@ -60,10 +58,10 @@ public:
         m_cond.notify_all();
     }
 
-    bool push_back(const T &item) {
-        unique_lock<mutex> locker(m_mtx);
+    bool push_back(const T& item) {
+        std::unique_lock<std::mutex> locker(m_mtx);
         if (m_deque.size() >= m_capacity) {
-            cout << "BlockQueue is enough !" << endl;
+            std::cout << "BlockQueue is enough !" << std::endl;
             m_cond.notify_all();
             return false;
         }
@@ -72,8 +70,8 @@ public:
         return true;
     }
 
-    bool pop_front(T &item) {
-        unique_lock<mutex> locker(m_mtx);
+    bool pop_front(T& item) {
+        std::unique_lock<std::mutex> locker(m_mtx);
         while (m_deque.empty()) {
             if (m_close)
                 return false;
@@ -85,10 +83,10 @@ public:
     }
 
 private:
-    mutex m_mtx;
-    condition_variable m_cond;
+    std::mutex m_mtx;
+    std::condition_variable m_cond;
 
-    deque<T> m_deque;
+    std::deque<T> m_deque;
     int m_capacity;
     bool m_close;
 };

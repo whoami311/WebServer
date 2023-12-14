@@ -1,6 +1,6 @@
 #include "timer.h"
 
-using namespace std;
+#include "log.h"
 
 // TimerNode::TimerNode(TimerCb cb, int timeout) {
 //     expires = Clock::now() + MS(timeout);
@@ -37,13 +37,13 @@ TimerManager::~TimerManager() {
 }
 
 // TimerNodePointer TimerManager::AddTimer(TimerCb cb, int timeout) {
-TimerNodePointer TimerManager::AddTimer(const TimerCb& cb, int timeout) {
-    lock_guard<mutex> locker(m_mtx);
+TimerNodePointer TimerManager::AddTimer(TimerCb cb, int timeout) {
+    std::lock_guard<std::mutex> locker(m_mtx);
     TimerNode node = {0};
     node.expires = Clock::now() + MS(timeout);
-    node.cb = cb;
+    node.cb = std::move(cb);
     node.deleted = false;
-    TimerNodePointer ptr = make_shared<TimerNode>(node);
+    TimerNodePointer ptr = std::make_shared<TimerNode>(node);
     m_heap.push(ptr);
     return ptr;
     // TimerNodePointer ptr(new TimerNode(cb, timeout));
@@ -57,10 +57,10 @@ TimerNodePointer TimerManager::AddTimer(const TimerCb& cb, int timeout) {
 // }
 
 void TimerManager::HandleTimer() {
-    lock_guard<mutex> locker(m_mtx);
+    std::lock_guard<std::mutex> locker(m_mtx);
     while (!m_heap.empty()) {
         TimerNodePointer node = m_heap.top();
-        LOG_INFO("m_heap.size() = %d in HandleTimer", m_heap.size());
+        LOG_INFO("m_heap.size() = %ld in HandleTimer", m_heap.size());
         if (node == nullptr) {
             LOG_INFO("node == nullptr in HandleTimer");
             m_heap.pop();
@@ -73,7 +73,7 @@ void TimerManager::HandleTimer() {
             continue;
         }
         // if (chrono::duration_cast<MS>(node->GetExpires() - Clock::now()).count() > 0)
-        if (chrono::duration_cast<MS>(node->expires - Clock::now()).count() > 0) {
+        if (std::chrono::duration_cast<MS>(node->expires - Clock::now()).count() > 0) {
             LOG_INFO("node untimed in HandleTimer");
             break;
         }

@@ -1,10 +1,18 @@
 #include "server.h"
 
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include <iostream>
+
+#include "log.h"
+#include "thread_pool.h"
+
 // Server::Server(const struct ConfigPara para) : m_threadPool(ThreadPool(para.threadNum, 100)) {
-Server::Server(const struct ConfigPara para) {
+Server::Server(const struct ConfigPara& para) {
     Log::GetInstance()->Init(para.logPath);
     LOG_INFO("test LOG_INFO");
-    ThreadPool::GetInstance()->Init(para.threadNum, DEFAULT_TASK_CAPACITY);
+    ThreadPool::GetInstance()->Init(para.threadNum);
 
     // m_threadPool = new ThreadPool(para.threadNum, 100);
     threadNum = para.threadNum;
@@ -18,6 +26,5 @@ void Server::Init() {
 }
 
 void Server::Run() {
-    // ThreadPool pool(threadNum, 100);
     m_networkConn.EventLoop();
 }

@@ -1,17 +1,14 @@
-#ifndef CLIENT_H
-#define CLIENT_H
+#pragma once
 
 #include <netinet/in.h>
-#include "utils.h"
-#include "timer.h"
+
 #include "http/http_data.h"
+#include "timer.h"
 
-using namespace std;
-
-enum E_HTTP_RESULT {
-    HTTP_RESULT_SUCCEED = 0,
-    HTTP_RESULT_READ_FAIL = 1,
-    HTTP_RESULT_WRITE_FAIL = 2
+enum class HTTP_RESULT {
+    SUCCEED = 0,
+    READ_FAIL = 1,
+    WRITE_FAIL = 2
 };
 
 class Client {
@@ -20,19 +17,18 @@ public:
     Client();
     ~Client();
 
-    void init(const int fd, sockaddr_in addr);
+    void Init(const int fd, const sockaddr_in& addr);
     void Close();
-    E_HTTP_RESULT Process();
-    E_HTTP_RESULT DealRead();
+    HTTP_RESULT Process();
+    HTTP_RESULT DealRead();
     void DealWrite();
-    weak_ptr<TimerNode> GetTimerNode();
-    void SetTimerNode(shared_ptr<TimerNode> node);
+    std::weak_ptr<TimerNode> GetTimerNode();
+    void SetTimerNode(std::shared_ptr<TimerNode> node);
     void DelTimer();
+
 private:
     int m_fd;
     sockaddr_in m_addr;
     HttpData http;
-    weak_ptr<TimerNode> timerNode;
+    std::weak_ptr<TimerNode> timerNode;
 };
-
-#endif

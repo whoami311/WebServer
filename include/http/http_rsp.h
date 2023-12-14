@@ -1,34 +1,26 @@
-#ifndef HTTP_RSP_H
-#define HTTP_RSP_H
+#pragma once
 
-#include <unistd.h>
-#include <sys/uio.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
-#include "string"
-#include "log.h"
-#include "http_req.h"
-#include "http/http_build.h"
 
-using namespace std;
+#include <string>
+
+#include "http/http_build.h"
+#include "http/http_req.h"
 
 class HttpRsp {
 public:
     HttpRsp();
     ~HttpRsp();
-    
-    static const int WRITE_BUFFER_SIZE = 1024;
 
-    void init();
-    bool ProcessWrite(HttpConfig config);
+    // static const int WRITE_BUFFER_SIZE = 1024;
+
+    void Init();
+    bool ProcessWrite(const HttpConfig& config);
     void unmap();
     // bool Write();
 
-    char *m_fileAddr;
+    char* m_fileAddr;
     struct stat m_fileStat;
-    string fileContent;
+    std::string fileContent;
     HttpBuild m_builder;
-private:
 };
-
-#endif

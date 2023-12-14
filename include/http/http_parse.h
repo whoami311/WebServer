@@ -1,20 +1,17 @@
-#ifndef HTTP_PARSE_H
-#define HTTP_PARSE_H
+#pragma once
 
-#include <iostream>
-#include <string>
 #include <map>
-#include <sstream>
+#include <string>
 
-class HttpParser{
-private:
-    std::map<std::string, std::string> http;
-    std::string format_key(std::string &str);
+class HttpParser {
 public:
-    HttpParser(char *buf);
+    HttpParser(char* buf);
     ~HttpParser();
-    void show();
-    std::string operator[](std::string str);
-};
+    void Show();
+    std::string operator[](const std::string& str);
 
-#endif
+private:
+    std::string FormatKey(const std::string& str);
+
+    std::map<std::string, std::string> http;
+};

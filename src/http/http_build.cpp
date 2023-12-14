@@ -1,6 +1,6 @@
 #include "http/http_build.h"
 
-using namespace std;
+#include <iostream>
 
 HttpBuild::HttpBuild() {
     endOfLine = "\r\n";
@@ -19,13 +19,13 @@ HttpBuild::HttpBuild() {
 
 HttpBuild::~HttpBuild() {}
 
-void HttpBuild::show() {
-    std::cout << getContent();
+void HttpBuild::Show() {
+    std::cout << GetContent();
 }
 
-string HttpBuild::operator[](string str) {
+std::string HttpBuild::operator[](const std::string &str) {
     if (str == "State")
-        return to_string(state);
+        return std::to_string(state);
     else if (str == "Version")
         return version;
     else if (str == "Body")
@@ -34,12 +34,12 @@ string HttpBuild::operator[](string str) {
         return header[str];
 }
 
-void HttpBuild::set(string key, string val) {
+void HttpBuild::Set(const std::string &key, const std::string &val) {
     if (key == "State") {
         state = stoi(val);
         if (state != 200) {
             body = stateBody[state];
-            header["Content-length"] = to_string(stateBody[state].size());
+            header["Content-length"] = std::to_string(stateBody[state].size());
         }
     } else if (key == "Version")
         version = val;
@@ -49,19 +49,19 @@ void HttpBuild::set(string key, string val) {
         header[key] = val;
 }
 
-string HttpBuild::getStateLine() {
-    return version + " " + to_string(state) + " " + stateTitle[state] + endOfLine;
+std::string HttpBuild::GetStateLine() {
+    return version + " " + std::to_string(state) + " " + stateTitle[state] + endOfLine;
 }
 
-string HttpBuild::getHeader() {
-    string s;
-    for(auto it = header.cbegin(); it != header.cend(); ++it){
+std::string HttpBuild::GetHeader() {
+    std::string s;
+    for (auto it = header.cbegin(); it != header.cend(); ++it) {
         s += it->first + ": " + it->second + endOfLine;
     }
     return s;
 }
 
-string HttpBuild::getContent() {
-    string s = getStateLine() + getHeader() + body + endOfLine;
+std::string HttpBuild::GetContent() {
+    std::string s = GetStateLine() + GetHeader() + body + endOfLine;
     return s;
 }
