@@ -133,7 +133,7 @@ void Log::Write2Queue(LOG_LEVEL level, const char* format, ...) {
     int n = snprintf(buf, sizeof(buf) - 1, "%04d-%02d-%02d %02d:%02d:%02d.%06ld %s ", sysTime->tm_year + 1900,
                      sysTime->tm_mon + 1, sysTime->tm_mday, sysTime->tm_hour, sysTime->tm_min, sysTime->tm_sec,
                      now.tv_usec, LEVEL_STRING[static_cast<int>(level)].c_str());
-    int m = vsnprintf(buf + n, sizeof(buf) - n, format, vaLst);
+    int m = vsnprintf(buf + n, sizeof(buf) - n - 1, format, vaLst);
     buf[n + m] = '\n';
     buf[n + m + 1] = '\0';
     std::string str = buf;

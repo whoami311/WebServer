@@ -13,7 +13,6 @@ public:
     Server(const struct ConfigPara& para);
     ~Server();
 
-    void Init();
     void Run();
 
 private:

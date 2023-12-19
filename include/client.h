@@ -13,11 +13,10 @@ enum class HTTP_RESULT {
 
 class Client {
 public:
-    // Client(const int fd, sockaddr_in addr);
     Client();
+    Client(int fd, const sockaddr_in& addr);
     ~Client();
 
-    void Init(const int fd, const sockaddr_in& addr);
     void Close();
     HTTP_RESULT Process();
     HTTP_RESULT DealRead();

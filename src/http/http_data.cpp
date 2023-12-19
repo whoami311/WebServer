@@ -7,10 +7,6 @@
 
 #include "log.h"
 
-void HttpData::Init() {
-    m_realFile = "";
-}
-
 HTTP_CODE HttpData::DoReq() {
     if (m_req.m_url == "/")
         m_realFile = "../pages/index.html";
@@ -32,7 +28,7 @@ HTTP_CODE HttpData::DoReq() {
         return HTTP_CODE::NO_RESOURCE;
     }
     // LOG_INFO("fd == %d in DoReq", fd);
-    m_rsp.m_fileAddr = (char *)mmap(0, m_rsp.m_fileStat.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    m_rsp.m_fileAddr = (char*)mmap(0, m_rsp.m_fileStat.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
     close(fd);
 
     m_rsp.fileContent = std::string(m_rsp.m_fileAddr, m_rsp.m_fileStat.st_size);

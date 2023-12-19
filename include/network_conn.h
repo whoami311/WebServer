@@ -37,7 +37,7 @@ public:
 private:
     int m_listenFd;
     int m_epollFd;
-    std::unordered_map<int, Client> m_clients;
+    std::unordered_map<int, std::unique_ptr<Client>> m_clients;
     int m_clientCnt;
     TimerManager timer;
     bool m_running;

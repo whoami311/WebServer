@@ -7,15 +7,7 @@
 
 Client::Client() {}
 
-// Client::Client(cosnt int fd, sockaddr_in addr) {
-//     m_fd = fd;
-//     m_addr = addr;
-// }
-
-void Client::Init(const int fd, const sockaddr_in &addr) {
-    m_fd = fd;
-    m_addr = addr;
-}
+Client::Client(int fd, const sockaddr_in& addr) : m_fd(fd), m_addr(addr) {}
 
 Client::~Client() {}
 

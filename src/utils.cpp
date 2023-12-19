@@ -24,4 +24,4 @@ std::string GetFileSuffix(const std::string& file) {
     return file.substr(index + 1);
 }
 
-}
+}  // namespace utils

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sstream>
 
-HttpParser::HttpParser(char *msg) {
+HttpParser::HttpParser(char* msg) {
     std::string buf(msg);
     std::istringstream buf_stream(buf);
     enum class Parts {
@@ -69,12 +69,12 @@ void HttpParser::Show() {
     }
 }
 
-std::string HttpParser::operator[](const std::string &str) {
+std::string HttpParser::operator[](const std::string& str) {
     auto it = http.find(FormatKey(str));
     return it != http.end() ? it->second : "";
 }
 
-std::string HttpParser::FormatKey(const std::string &str) {
+std::string HttpParser::FormatKey(const std::string& str) {
     std::string des(str);
     if (des[0] >= 'a' && des[0] <= 'z') {
         des[0] = des[0] + 'A' - 'a';

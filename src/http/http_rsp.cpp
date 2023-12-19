@@ -7,15 +7,13 @@
 #include "log.h"
 #include "utils.h"
 
-HttpRsp::HttpRsp() {}
+HttpRsp::HttpRsp() : m_fileAddr(nullptr) {}
 
 HttpRsp::~HttpRsp() {
     m_fileAddr = nullptr;
 }
 
-void HttpRsp::Init() {}
-
-bool HttpRsp::ProcessWrite(const HttpConfig &config) {
+bool HttpRsp::ProcessWrite(const HttpConfig& config) {
     HTTP_CODE ret = config.reqRes;
     m_builder.Set("Version", config.version);
     m_builder.Set("Server", "Felix Server");

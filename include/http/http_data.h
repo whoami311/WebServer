@@ -5,7 +5,6 @@
 
 class HttpData {
 public:
-    void Init();
     void CloseConn();
     HTTP_CODE DoReq();
 

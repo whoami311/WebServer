@@ -14,7 +14,6 @@ public:
 
     // static const int WRITE_BUFFER_SIZE = 1024;
 
-    void Init();
     bool ProcessWrite(const HttpConfig& config);
     void unmap();
     // bool Write();

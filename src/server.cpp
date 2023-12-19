@@ -21,10 +21,6 @@ Server::Server(const struct ConfigPara& para) {
 
 Server::~Server() {}
 
-void Server::Init() {
-    // m_networkConn.InitSocket();
-}
-
 void Server::Run() {
     m_networkConn.EventLoop();
 }

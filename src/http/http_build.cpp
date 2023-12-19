@@ -23,7 +23,7 @@ void HttpBuild::Show() {
     std::cout << GetContent();
 }
 
-std::string HttpBuild::operator[](const std::string &str) {
+std::string HttpBuild::operator[](const std::string& str) {
     if (str == "State")
         return std::to_string(state);
     else if (str == "Version")
@@ -34,7 +34,7 @@ std::string HttpBuild::operator[](const std::string &str) {
         return header[str];
 }
 
-void HttpBuild::Set(const std::string &key, const std::string &val) {
+void HttpBuild::Set(const std::string& key, const std::string& val) {
     if (key == "State") {
         state = stoi(val);
         if (state != 200) {

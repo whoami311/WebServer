@@ -125,7 +125,7 @@ void NetworkConn::EpollInit() {
 
 void NetworkConn::CloseCli(int fd) {
     EpollDelFd(fd);
-    m_clients[fd].Close();
+    m_clients[fd]->Close();
     m_clients.erase(fd);
     m_clientCnt--;
     LOG_INFO("CloseCli fd == %d", fd);
@@ -133,14 +133,13 @@ void NetworkConn::CloseCli(int fd) {
 }
 
 void NetworkConn::AddCli(int fd, const sockaddr_in& addr) {
-    // Client client(fd, addr);
-    // m_clients[fd] = client;
-    m_clients[fd].Init(fd, addr);
+    // m_clients[fd] = std::make_unique<Client>(fd, addr);
+    m_clients.insert(std::make_pair(fd, std::make_unique<Client>(fd, addr)));
     m_clientCnt++;
     EpollAddFd(fd, true);
     // m_clients[fd].SetTimerNode(timer.AddTimer(std::bind(&NetworkConn::CloseCli, this, fd), CLOSE_SOCKET_MS));
     std::shared_ptr<TimerNode> node = timer.AddTimer(std::bind(&NetworkConn::CloseCli, this, fd), CLOSE_SOCKET_MS);
-    m_clients[fd].SetTimerNode(node);
+    m_clients[fd]->SetTimerNode(node);
     utils::SetNonBlock(fd);
 }
 
@@ -164,12 +163,12 @@ void NetworkConn::AcceptClient() {
 }
 
 void NetworkConn::DealErrCli(int fd) {
-    m_clients[fd].DelTimer();
+    m_clients[fd]->DelTimer();
     CloseCli(fd);
 }
 
 void NetworkConn::DealReadCli(int fd) {
-    HTTP_RESULT res = m_clients[fd].DealRead();
+    HTTP_RESULT res = m_clients[fd]->DealRead();
     switch (res) {
         case HTTP_RESULT::SUCCEED:
             // EpollModFd(fd, EPOLLOUT);
@@ -218,7 +217,7 @@ void NetworkConn::EventLoop() {
                 ThreadPool::GetInstance()->AppendTask(std::bind(&NetworkConn::DealReadCli, this, fd));
             } else if (event.events & EPOLLOUT) {
                 LOG_INFO("will DealWrite, fd == %d", fd);
-                m_clients[fd].DealWrite();
+                m_clients[fd]->DealWrite();
             } else {
                 LOG_INFO("some other things happened.");
             }
