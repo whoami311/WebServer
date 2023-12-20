@@ -9,11 +9,11 @@
 struct TimerNode;
 // class TimerNode;
 
-typedef std::function<void()> TimerCb;
-typedef std::chrono::high_resolution_clock Clock;
-typedef Clock::time_point TimePoint;
-typedef std::shared_ptr<TimerNode> TimerNodePointer;
-typedef std::chrono::milliseconds MS;
+using TimerCb = std::function<void()>;
+using Clock = std::chrono::high_resolution_clock;
+using TimePoint = Clock::time_point;
+using TimerNodePointer = std::shared_ptr<TimerNode>;
+using MS = std::chrono::milliseconds;
 
 // class TimerNode {
 // public:
