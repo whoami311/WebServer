@@ -5,37 +5,20 @@
 #include <mutex>
 #include <queue>
 
+#include "common/singleton.h"
+
 constexpr int DEFAULT_TASK_CAPACITY = 100;
 
-// class ThreadPool
-// {
-// public:
-//     ThreadPool(int threadNum, int taskCapacity);
-//     ~ThreadPool();
-
-//     bool AppendTask(function<void()> task);
-// private:
-//     int m_threadNum;
-//     int m_taskCapacity;
-
-//     mutex m_mtx;
-//     condition_variable m_cond;
-//     queue<function<void()>> m_taskQueue;
-//     bool m_close;
-// };
-
-class ThreadPool {
+class ThreadPool : public Singleton<ThreadPool, true> {
 public:
-    static ThreadPool* GetInstance() {
-        static ThreadPool instance;
-        return &instance;
-    }
-    void Init(int threadNum = 4, int taskCapacity = DEFAULT_TASK_CAPACITY);
+    friend Singleton<ThreadPool, true>;
+
+    ~ThreadPool() override;
+
     bool AppendTask(std::function<void()> task);
 
 private:
-    ThreadPool();
-    ~ThreadPool();
+    ThreadPool(int threadNum = 4, int taskCapacity = DEFAULT_TASK_CAPACITY);
 
     int m_threadNum;
     int m_taskCapacity;

@@ -213,8 +213,7 @@ void NetworkConn::EventLoop() {
                 DealErrCli(fd);
             } else if (event.events & (EPOLLIN | EPOLLPRI)) {
                 LOG_INFO("will DealReadCli, fd == %d", fd);
-                // DealReadCli(fd);
-                ThreadPool::GetInstance()->AppendTask(std::bind(&NetworkConn::DealReadCli, this, fd));
+                ThreadPool::Instance()->AppendTask(std::bind(&NetworkConn::DealReadCli, this, fd));
             } else if (event.events & EPOLLOUT) {
                 LOG_INFO("will DealWrite, fd == %d", fd);
                 m_clients[fd]->DealWrite();

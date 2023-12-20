@@ -10,11 +10,7 @@
 constexpr int MAX_THERAD_NUM = 1024;
 constexpr int MAX_TASK_CAPACITY = 10000;
 
-ThreadPool::ThreadPool() {
-    m_close = false;
-}
-
-void ThreadPool::Init(int threadNum, int taskCapacity) {
+ThreadPool::ThreadPool(int threadNum, int taskCapacity) : m_close(false) {
     utils::CorrectNumberRange(threadNum, 1, MAX_THERAD_NUM);
     utils::CorrectNumberRange(taskCapacity, 1, MAX_TASK_CAPACITY);
     m_threadNum = threadNum;

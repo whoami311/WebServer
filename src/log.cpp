@@ -4,14 +4,7 @@
 
 #include <iostream>
 
-const constexpr char* DEFAULT_LOG_FILE_NAME = "webserver.log";
 constexpr int MAX_LINES = 10000;
-
-Log::Log() {
-    m_lineCnt = 0;
-    m_fp = nullptr;
-    m_queue = nullptr;
-}
 
 Log::~Log() {
     std::cout << "~Log start." << std::endl;
@@ -36,15 +29,14 @@ void Log::flush() {
     fflush(m_fp);
 }
 
-bool Log::Init(const std::string& path) {
-    // LEVEL_STRING = ["[debug]:", "[info]:", "[warn]:", "[error]:"];
+Log::Log(const std::string& path) : m_lineCnt(0), m_fp(nullptr), m_queue(nullptr) {
     LEVEL_STRING.push_back("[debug]:");
     LEVEL_STRING.push_back("[info]:");
     LEVEL_STRING.push_back("[warn]:");
     LEVEL_STRING.push_back("[error]:");
     if (!m_queue) {
         m_queue = std::make_unique<BlockQueue<std::string>>();
-        m_writeThread = std::thread(FlushLogThread);
+        m_writeThread = std::thread(&Log::FlushLogThread, this);
     }
 
     int pos = path.find_last_of('/');
@@ -63,7 +55,6 @@ bool Log::Init(const std::string& path) {
     struct tm* sysTime = localtime(&t);
 
     m_today = sysTime->tm_mday;
-    // m_filePath = m_dirName + '/' + m_fileName;
     char filePath[256] = {};
     snprintf(filePath, sizeof(filePath) - 1, "%s/%04d_%02d_%02d_%s", m_dirName.c_str(), sysTime->tm_year + 1900,
              sysTime->tm_mon + 1, sysTime->tm_mday, m_fileName.c_str());
@@ -80,10 +71,9 @@ bool Log::Init(const std::string& path) {
         m_fp = fopen(filePath, "a");
         if (m_fp == nullptr) {
             std::cout << "open " << filePath << " failed." << std::endl;
-            return false;
+            exit(0);
         }
     }
-    return true;
 }
 
 void Log::Queue2File() {

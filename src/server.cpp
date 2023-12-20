@@ -8,18 +8,19 @@
 #include "log.h"
 #include "thread_pool.h"
 
-// Server::Server(const struct ConfigPara para) : m_threadPool(ThreadPool(para.threadNum, 100)) {
 Server::Server(const struct ConfigPara& para) {
-    Log::GetInstance()->Init(para.logPath);
+    Log::Create(para.logPath);
     LOG_INFO("test LOG_INFO");
-    ThreadPool::GetInstance()->Init(para.threadNum);
+    ThreadPool::Create(para.threadNum);
 
-    // m_threadPool = new ThreadPool(para.threadNum, 100);
     threadNum = para.threadNum;
     m_networkConn.InitSocket("", para.port);
 }
 
-Server::~Server() {}
+Server::~Server() {
+    ThreadPool::Destroy();
+    Log::Destroy();
+}
 
 void Server::Run() {
     m_networkConn.EventLoop();
