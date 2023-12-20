@@ -15,7 +15,7 @@
     do {                                                \
         printf(format, ##__VA_ARGS__);                  \
         printf("\n");                                   \
-        auto log = Log::Instance();                  \
+        auto log = Log::Instance();                     \
         log->Write2Queue(level, format, ##__VA_ARGS__); \
         log->flush();                                   \
     } while (0);
